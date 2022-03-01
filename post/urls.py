@@ -18,5 +18,6 @@ from django.urls import path
 from post import views
 
 urlpatterns = [
-    path('posts/<int:post_id>/', views.detail, name='post_detail'),
+    path('<int:post_id>/', views.detail, name='post_detail'),
+    path('', views.write),
 ]

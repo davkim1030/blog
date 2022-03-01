@@ -1,5 +1,3 @@
-import requests
-
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.test import TestCase
@@ -25,7 +23,7 @@ class TestPost(TestCase):
         post = Post.objects.get(id=self.post.id)
         values = post.__dict__
         values['author'] = post.author.username
-        self.assertEqual(actual_response.content, render(None, 'post_detail.html', values).content)
+        self.assertEqual(actual_response.content, render(None, 'post/post_detail.html', values).content)
 
     def test_get_post_detail_not_existing(self):
         # When: calling not existing post id
@@ -33,3 +31,17 @@ class TestPost(TestCase):
 
         # Then: gets 404 not found
         self.assertEqual(actual_response.status_code, 404)
+
+    def test_get_posts_write_when_logged_out(self):
+        # When: calling GET /posts/ when logged out
+        actual_response = self.client.get(reverse(views.write))
+
+        # Then: gets forbidden
+        self.assertEquals(actual_response.status_code, 403)
+
+    def test_get_posts_write_when_logged_in(self):
+        # When: calling GET /posts/ when logged in
+        actual_response = self.client.get(reverse(views.write))
+
+        # Then: gets posts writting page
+        self.assertEquals(actual_response.content, render(None, 'post/post_write.html').content)
